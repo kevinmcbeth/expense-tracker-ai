@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, ArrowUpFromLine } from 'lucide-react';
 import { useExpenses } from '@/hooks/useExpenses';
 import SummaryCards from '@/components/dashboard/SummaryCards';
 import RecentExpenses from '@/components/dashboard/RecentExpenses';
@@ -9,11 +9,13 @@ import MonthlyBarChart from '@/components/charts/MonthlyBarChart';
 import CategoryPieChart from '@/components/charts/CategoryPieChart';
 import Modal from '@/components/ui/Modal';
 import ExpenseForm from '@/components/expenses/ExpenseForm';
+import ExportModal from '@/components/export/ExportModal';
 import toast from 'react-hot-toast';
 
 export default function DashboardPage() {
-  const { stats, isLoaded, addExpense } = useExpenses();
+  const { expenses, stats, isLoaded, addExpense } = useExpenses();
   const [addOpen, setAddOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
 
   if (!isLoaded) {
     return (
@@ -31,13 +33,23 @@ export default function DashboardPage() {
           <h2 className="text-xl font-bold text-gray-900">Overview</h2>
           <p className="text-sm text-gray-500 mt-0.5">Track your spending at a glance</p>
         </div>
-        <button
-          onClick={() => setAddOpen(true)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm"
-        >
-          <Plus size={16} />
-          Add Expense
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setExportOpen(true)}
+            className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700
+                       rounded-lg text-sm font-medium hover:bg-gray-50 hover:border-gray-300 transition-colors shadow-sm"
+          >
+            <ArrowUpFromLine size={15} className="text-gray-500" />
+            Export
+          </button>
+          <button
+            onClick={() => setAddOpen(true)}
+            className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm"
+          >
+            <Plus size={16} />
+            Add Expense
+          </button>
+        </div>
       </div>
 
       {/* Summary cards */}
@@ -54,6 +66,13 @@ export default function DashboardPage() {
         <RecentExpenses expenses={stats.recentExpenses} />
         <CategoryBreakdownInline data={stats.categoryStats} />
       </div>
+
+      {/* Export modal */}
+      <ExportModal
+        open={exportOpen}
+        onClose={() => setExportOpen(false)}
+        expenses={expenses}
+      />
 
       {/* Add modal */}
       <Modal open={addOpen} onClose={() => setAddOpen(false)} title="Add New Expense">
