@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Download } from 'lucide-react';
 import { useExpenses } from '@/hooks/useExpenses';
+import { exportToCSV } from '@/lib/utils';
 import SummaryCards from '@/components/dashboard/SummaryCards';
 import RecentExpenses from '@/components/dashboard/RecentExpenses';
 import MonthlyBarChart from '@/components/charts/MonthlyBarChart';
@@ -12,7 +13,7 @@ import ExpenseForm from '@/components/expenses/ExpenseForm';
 import toast from 'react-hot-toast';
 
 export default function DashboardPage() {
-  const { stats, isLoaded, addExpense } = useExpenses();
+  const { expenses, stats, isLoaded, addExpense } = useExpenses();
   const [addOpen, setAddOpen] = useState(false);
 
   if (!isLoaded) {
@@ -31,13 +32,22 @@ export default function DashboardPage() {
           <h2 className="text-xl font-bold text-gray-900">Overview</h2>
           <p className="text-sm text-gray-500 mt-0.5">Track your spending at a glance</p>
         </div>
-        <button
-          onClick={() => setAddOpen(true)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm"
-        >
-          <Plus size={16} />
-          Add Expense
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => exportToCSV(expenses)}
+            className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+          >
+            <Download size={16} />
+            Export Data
+          </button>
+          <button
+            onClick={() => setAddOpen(true)}
+            className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm"
+          >
+            <Plus size={16} />
+            Add Expense
+          </button>
+        </div>
       </div>
 
       {/* Summary cards */}
